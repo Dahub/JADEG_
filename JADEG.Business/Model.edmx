@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="JadegModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Dungeon">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FK_Dungeon" Type="int" Nullable="false" />
+          <Property Name="FK_TypeTile" Type="int" Nullable="false" />
+          <Property Name="XCoord" Type="int" Nullable="false" />
+          <Property Name="YCoord" Type="int" Nullable="false" />
+          <Property Name="Pitch" Type="int" Nullable="false" />
+          <Property Name="Backgound" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="TypeTile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Rate" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Wall">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FK_Tile" Type="int" Nullable="false" />
+          <Property Name="StartXCoord" Type="int" Nullable="false" />
+          <Property Name="EndXCoord" Type="int" Nullable="false" />
+          <Property Name="StartYCoord" Type="int" Nullable="false" />
+          <Property Name="EndYCoord" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Tile_Dungeon">
+          <End Role="Dungeon" Type="Self.Dungeon" Multiplicity="1" />
+          <End Role="Tile" Type="Self.Tile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dungeon">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tile">
+              <PropertyRef Name="FK_Dungeon" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TypeTile_Tile">
+          <End Role="TypeTile" Type="Self.TypeTile" Multiplicity="1" />
+          <End Role="Tile" Type="Self.Tile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TypeTile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tile">
+              <PropertyRef Name="FK_TypeTile" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Wall_Tile">
+          <End Role="Tile" Type="Self.Tile" Multiplicity="1" />
+          <End Role="Wall" Type="Self.Wall" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Wall">
+              <PropertyRef Name="FK_Tile" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="JadegModelStoreContainer">
+          <EntitySet Name="Dungeon" EntityType="Self.Dungeon" Schema="jadeg" store:Type="Tables" />
+          <EntitySet Name="Tile" EntityType="Self.Tile" Schema="jadeg" store:Type="Tables" />
+          <EntitySet Name="TypeTile" EntityType="Self.TypeTile" Schema="jadeg" store:Type="Tables" />
+          <EntitySet Name="Wall" EntityType="Self.Wall" Schema="jadeg" store:Type="Tables" />
+          <AssociationSet Name="FK_Tile_Dungeon" Association="Self.FK_Tile_Dungeon">
+            <End Role="Dungeon" EntitySet="Dungeon" />
+            <End Role="Tile" EntitySet="Tile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TypeTile_Tile" Association="Self.FK_TypeTile_Tile">
+            <End Role="TypeTile" EntitySet="TypeTile" />
+            <End Role="Tile" EntitySet="Tile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Wall_Tile" Association="Self.FK_Wall_Tile">
+            <End Role="Tile" EntitySet="Tile" />
+            <End Role="Wall" EntitySet="Wall" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="JadegModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Dungeon">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Tiles" Relationship="Self.FK_Tile_Dungeon" FromRole="Dungeon" ToRole="Tile" />
+        </EntityType>
+        <EntityType Name="Tile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FK_Dungeon" Type="Int32" Nullable="false" />
+          <Property Name="FK_TypeTile" Type="Int32" Nullable="false" />
+          <Property Name="XCoord" Type="Int32" Nullable="false" />
+          <Property Name="YCoord" Type="Int32" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Dungeon" Relationship="Self.FK_Tile_Dungeon" FromRole="Tile" ToRole="Dungeon" />
+          <NavigationProperty Name="TypeTile" Relationship="Self.FK_TypeTile_Tile" FromRole="Tile" ToRole="TypeTile" />
+          <Property Name="Pitch" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Walls" Relationship="JadegModel.FK_Wall_Tile" FromRole="Tile" ToRole="Wall" />
+          <Property Name="Backgound" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="TypeTile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Tile" Relationship="Self.FK_TypeTile_Tile" FromRole="TypeTile" ToRole="Tile" />
+          <Property Name="Rate" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Tile_Dungeon">
+          <End Role="Dungeon" Type="Self.Dungeon" Multiplicity="1" />
+          <End Role="Tile" Type="Self.Tile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dungeon">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tile">
+              <PropertyRef Name="FK_Dungeon" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TypeTile_Tile">
+          <End Role="TypeTile" Type="Self.TypeTile" Multiplicity="1" />
+          <End Role="Tile" Type="Self.Tile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TypeTile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tile">
+              <PropertyRef Name="FK_TypeTile" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Dungeon" EntityType="Self.Dungeon" />
+          <EntitySet Name="Tile" EntityType="Self.Tile" />
+          <EntitySet Name="TypeTile" EntityType="Self.TypeTile" />
+          <AssociationSet Name="FK_Tile_Dungeon" Association="Self.FK_Tile_Dungeon">
+            <End Role="Dungeon" EntitySet="Dungeon" />
+            <End Role="Tile" EntitySet="Tile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TypeTile_Tile" Association="Self.FK_TypeTile_Tile">
+            <End Role="TypeTile" EntitySet="TypeTile" />
+            <End Role="Tile" EntitySet="Tile" />
+          </AssociationSet>
+          <EntitySet Name="Wall" EntityType="JadegModel.Wall" />
+          <AssociationSet Name="FK_Wall_Tile" Association="JadegModel.FK_Wall_Tile">
+            <End Role="Tile" EntitySet="Tile" />
+            <End Role="Wall" EntitySet="Wall" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Wall">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FK_Tile" Type="Int32" Nullable="false" />
+          <Property Name="StartXCoord" Type="Int32" Nullable="false" />
+          <Property Name="EndXCoord" Type="Int32" Nullable="false" />
+          <Property Name="StartYCoord" Type="Int32" Nullable="false" />
+          <Property Name="EndYCoord" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Tile" Relationship="JadegModel.FK_Wall_Tile" FromRole="Wall" ToRole="Tile" />
+        </EntityType>
+        <Association Name="FK_Wall_Tile">
+          <End Type="JadegModel.Tile" Role="Tile" Multiplicity="1" />
+          <End Type="JadegModel.Wall" Role="Wall" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Wall">
+              <PropertyRef Name="FK_Tile" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="JadegModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="Dungeon">
+            <EntityTypeMapping TypeName="JadegModel.Dungeon">
+              <MappingFragment StoreEntitySet="Dungeon">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tile">
+            <EntityTypeMapping TypeName="JadegModel.Tile">
+              <MappingFragment StoreEntitySet="Tile">
+                <ScalarProperty Name="Backgound" ColumnName="Backgound" />
+                <ScalarProperty Name="Pitch" ColumnName="Pitch" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FK_Dungeon" ColumnName="FK_Dungeon" />
+                <ScalarProperty Name="FK_TypeTile" ColumnName="FK_TypeTile" />
+                <ScalarProperty Name="XCoord" ColumnName="XCoord" />
+                <ScalarProperty Name="YCoord" ColumnName="YCoord" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TypeTile">
+            <EntityTypeMapping TypeName="JadegModel.TypeTile">
+              <MappingFragment StoreEntitySet="TypeTile">
+                <ScalarProperty Name="Rate" ColumnName="Rate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Wall">
+            <EntityTypeMapping TypeName="JadegModel.Wall">
+              <MappingFragment StoreEntitySet="Wall">
+                <ScalarProperty Name="EndYCoord" ColumnName="EndYCoord" />
+                <ScalarProperty Name="StartYCoord" ColumnName="StartYCoord" />
+                <ScalarProperty Name="EndXCoord" ColumnName="EndXCoord" />
+                <ScalarProperty Name="StartXCoord" ColumnName="StartXCoord" />
+                <ScalarProperty Name="FK_Tile" ColumnName="FK_Tile" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

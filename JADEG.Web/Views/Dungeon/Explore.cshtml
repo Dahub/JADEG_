@@ -1,0 +1,239 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="canvasDiv">
+    <canvas id="canvas" width="600" height="600">
+        Votre navigateur ne supporte pas canvas.
+    </canvas>
+</div>
+<script type="text/javascript">
+
+    var pitchNumbers = 120;
+    var size = 600;
+    var pitch = size / pitchNumbers;
+    var ticker;
+    var canvas = document.querySelector('#canvas');
+    var context = canvas.getContext('2d');
+    var playerSize = 10;
+
+    var ressources = {};
+    var sources = {
+        nesw: '/Images/nesw.svg'
+    }
+
+    var tile; // la case en cours
+    var nextTile; // la prochaine case, lorsque le joueur en change
+
+    var canvasOrigin = { x: 0, y: 0 };
+    var playerPosition = { x: 60, y: 20 };
+    var toGoPosition = { x: playerPosition.x, y: playerPosition.y }
+
+    var tileMove = { tileLoaded: false, N: false, E: false, S: false, W: false }
+
+    $(document).ready(function () {
+
+        // chargement de la tile
+        $.ajax({
+            url: '/Tile/LoadTile',
+            cache: false,
+            async: false,
+            type: 'GET',
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8'
+        }).done(function (data) {
+            tile = data;
+        });
+
+        $('#canvasDiv').click(function (evt) {
+            if (tileMove.N !== true && tileMove.S !== true && tileMove.E !== true && tileMove.W !== true) {
+                var rect = canvas.getBoundingClientRect();
+                var xcord = evt.clientX - rect.left
+                var ycord = evt.clientY - rect.top;
+                toGoPosition.x = Math.ceil(xcord / pitch);
+                toGoPosition.y = Math.ceil(ycord / pitch);
+            }
+        });
+
+        loadRessources(sources, function () {
+            start();
+        });
+
+    });
+
+    function start() {
+        ticker = setInterval(refreshCanvas, 50);
+    }
+
+    function loadRessources(sources, callback) {
+        var loadedImages = 0;
+        var numImages = 0;
+
+        for (var s in sources) {
+            numImages++;
+        }
+        for (var src in sources) {
+            ressources[src] = new Image();
+            ressources[src].onload = function () {
+                if (++loadedImages >= numImages) {
+                    callback(ressources);
+                }
+            };
+            ressources[src].src = sources[src];
+        }
+    }
+
+    function refreshCanvas() {
+
+        calcPlayerPosition();
+        checkTileChange();
+
+        context.clearRect(0, 0, size, size);
+
+        context.drawImage(ressources[tile.Background], canvasOrigin.x * pitch, canvasOrigin.y * pitch, size, size);
+        if (tileMove.E === true && typeof nextTile != 'undefined') {
+            context.drawImage(ressources[nextTile.Background], size + canvasOrigin.x * pitch, canvasOrigin.y * pitch, size, size);
+        }
+        else if (tileMove.W === true && typeof nextTile != 'undefined') {
+            context.drawImage(ressources[nextTile.Background], canvasOrigin.x * pitch - size, canvasOrigin.y * pitch, size, size);
+        }
+        else if (tileMove.N === true && typeof nextTile != 'undefined') {
+            context.drawImage(ressources[nextTile.Background], canvasOrigin.x * pitch, canvasOrigin.y * pitch - size, size, size);
+        }
+        else if (tileMove.S === true && typeof nextTile != 'undefined') {
+            context.drawImage(ressources[nextTile.Background], canvasOrigin.x * pitch, size + canvasOrigin.y * pitch, size, size);
+        }
+
+        // on trace le player
+        context.fillStyle = 'rgba(102, 0, 51)';
+        context.fillRect(
+            Math.round(playerPosition.x * pitch - playerSize * pitch / 2),
+            Math.round(playerPosition.y * pitch - playerSize * pitch / 2),
+            playerSize * pitch,
+            playerSize * pitch);
+    }
+
+    function checkTileChange() {
+        // on vérifie qu'on est dans une zone de sortie
+        if (playerPosition.x >= pitchNumbers - (playerSize / 2)) {
+            tileMove.E = true;
+        }
+        else if (playerPosition.x <= playerSize / 2) {
+            tileMove.W = true;
+        }
+        else if (playerPosition.y <= playerSize / 2) {
+            tileMove.N = true;
+        }
+        else if (playerPosition.y >= pitchNumbers - (playerSize / 2)) {
+            tileMove.S = true;
+        }
+
+        if (tileMove.tileLoaded === false && (tileMove.E === true || tileMove.W || true && tileMove.N === true || tileMove.S === true)) {
+            $.ajax({
+                url: '/Tile/LoadTile',
+                cache: false,
+                async: false,
+                type: 'GET',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8'
+            }).done(function (data) {
+                nextTile = data;
+            });
+            tileMove.tileLoaded = true;
+        }
+
+        if (tileMove.E === true) {
+            canvasOrigin.x -= 2 * pitch;
+            playerPosition.x -= 1.6 * pitch;
+        }
+        else if (tileMove.W === true) {
+            canvasOrigin.x += 2 * pitch;
+            playerPosition.x += 1.5 * pitch;
+        }
+        else if (tileMove.N === true) {
+            canvasOrigin.y += 2 * pitch;
+            playerPosition.y += 1.5 * pitch;
+        }
+        else if (tileMove.S === true) {
+            canvasOrigin.y -= 2 * pitch;
+            playerPosition.y -= 1.6 * pitch;
+        }
+
+        canvasOrigin.x = Math.round(canvasOrigin.x);
+        canvasOrigin.y = Math.round(canvasOrigin.y);
+        playerPosition.x = Math.round(playerPosition.x);
+        playerPosition.y = Math.round(playerPosition.y);
+
+        if (Math.abs(canvasOrigin.x) > pitchNumbers || Math.abs(canvasOrigin.y) > pitchNumbers) {
+            tileMove.E = false;
+            tileMove.W = false;
+            tileMove.N = false;
+            tileMove.S = false;
+            canvasOrigin.x = 0;
+            canvasOrigin.y = 0;
+            toGoPosition.x = playerPosition.x;
+            toGoPosition.y = playerPosition.y;
+            tileMove.tileLoaded = false;
+            tile = nextTile;
+            nextTile = null;
+        }
+    }
+
+    function calcPlayerPosition() {
+        if (tileMove.N !== true && tileMove.S !== true && tileMove.E !== true && tileMove.W !== true) {
+            var cannotMove = true;
+            if (toGoPosition.x > playerPosition.x) {
+                if (checkIfInWall(playerPosition.x + 1, playerPosition.y) === false) {
+                    playerPosition.x += 1;
+                    cannotMove = false;
+                }
+            }
+            else if (toGoPosition.x < playerPosition.x) {
+                if (checkIfInWall(playerPosition.x - 1, playerPosition.y) === false) {
+                    playerPosition.x -= 1;
+                    cannotMove = false;
+                }
+            }
+            if (toGoPosition.y > playerPosition.y) {
+                if (checkIfInWall(playerPosition.x, playerPosition.y + 1) === false) {
+                    playerPosition.y += 1;
+                    cannotMove = false;
+                }
+            }
+            else if (toGoPosition.y < playerPosition.y) {
+                if (checkIfInWall(playerPosition.x, playerPosition.y - 1) === false) {
+                    playerPosition.y -= 1;
+                    cannotMove = false;
+                }
+            }
+            if (cannotMove === true) {
+                toGoPosition.x = playerPosition.x;
+                toGoPosition.y = playerPosition.y;
+            }
+        }
+    }
+
+    function checkIfInWall(x, y) {
+        var result = false;
+        var padding = playerSize / 2;
+
+        $.each(tile.Walls, function (i, val) {
+            if (x < val.EndX + padding
+                && x > val.StartX - padding
+                && y > val.StartY - padding
+                && y < val.EndY + padding) {
+                result = true;
+                return false;
+            }
+            else if (x < 0 + padding
+                    || x > pitchNumbers - padding
+                    || y < 0 + padding
+                    || y > pitchNumbers - padding) {
+                result = true;
+                return false;
+            }
+        });
+        return result;
+    }
+
+</script>
