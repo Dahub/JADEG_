@@ -10,7 +10,7 @@ namespace JADEG.Business
 
             using (var ctx = new Entities())
             {
-                var myTile = ctx.Tile.Where(t => t.FK_Dungeon.Equals(dungeonId) && t.XCoord.Equals(xCoord) && t.YCoord.Equals(yCoord)).FirstOrDefault();
+                var myTile = ctx.LinkDungeonTile.Where(t => t.FK_Dungeon.Equals(dungeonId) && t.XCoord.Equals(xCoord) && t.YCoord.Equals(yCoord)).FirstOrDefault();
                 if(myTile != null)
                 {
                     toReturn = myTile.ToDto();

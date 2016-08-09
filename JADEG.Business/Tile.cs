@@ -18,20 +18,22 @@ namespace JADEG.Business
         public Tile()
         {
             this.Walls = new HashSet<Wall>();
+            this.LinkDungeonTile = new HashSet<LinkDungeonTile>();
         }
     
         public int Id { get; set; }
-        public int FK_Dungeon { get; set; }
         public int FK_TypeTile { get; set; }
-        public int XCoord { get; set; }
-        public int YCoord { get; set; }
-        public string Content { get; set; }
         public int Pitch { get; set; }
         public string Backgound { get; set; }
+        public bool CanLinkNorth { get; set; }
+        public bool CanLinkSouth { get; set; }
+        public bool CanLinkEast { get; set; }
+        public bool CanLinkWest { get; set; }
     
-        public virtual Dungeon Dungeon { get; set; }
         public virtual TypeTile TypeTile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Wall> Walls { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LinkDungeonTile> LinkDungeonTile { get; set; }
     }
 }

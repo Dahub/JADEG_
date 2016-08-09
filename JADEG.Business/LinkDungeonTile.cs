@@ -12,18 +12,15 @@ namespace JADEG.Business
     using System;
     using System.Collections.Generic;
     
-    public partial class Dungeon
+    public partial class LinkDungeonTile
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Dungeon()
-        {
-            this.LinkDungeonTile = new HashSet<LinkDungeonTile>();
-        }
-    
         public int Id { get; set; }
-        public string Name { get; set; }
+        public int FK_Tile { get; set; }
+        public int FK_Dungeon { get; set; }
+        public int XCoord { get; set; }
+        public int YCoord { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LinkDungeonTile> LinkDungeonTile { get; set; }
+        public virtual Dungeon Dungeon { get; set; }
+        public virtual Tile Tile { get; set; }
     }
 }

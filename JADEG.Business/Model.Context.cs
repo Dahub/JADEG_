@@ -29,5 +29,6 @@ namespace JADEG.Business
         public virtual DbSet<Tile> Tile { get; set; }
         public virtual DbSet<TypeTile> TypeTile { get; set; }
         public virtual DbSet<Wall> Wall { get; set; }
+        public virtual DbSet<LinkDungeonTile> LinkDungeonTile { get; set; }
     }
 }

@@ -12,6 +12,9 @@ begin
 end
 go
 
+if exists (select * from dbo.sysobjects where id = object_id(N'[jadeg].[LinkDungeonTile]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [jadeg].[LinkDungeonTile]
+go
 if exists (select * from dbo.sysobjects where id = object_id(N'[jadeg].[Wall]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 drop table [jadeg].[Wall]
 go
@@ -24,6 +27,7 @@ go
 if exists (select * from dbo.sysobjects where id = object_id(N'[jadeg].[Dungeon]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 drop table [jadeg].[Dungeon]
 go
+
 
 create table [jadeg].[Dungeon]
 (
@@ -42,14 +46,14 @@ go
 
 create table [jadeg].[Tile]
 (
-	Id integer not null primary key identity(1,1),
-	FK_Dungeon integer not null constraint FK_Tile_Dungeon foreign key references [jadeg].[Dungeon](Id),
-	FK_TypeTile integer not null constraint FK_TypeTile_Tile foreign key references [jadeg].[TypeTile](Id),
-	XCoord integer not null,
-	YCoord integer not null,
+	Id integer not null primary key identity(1,1),	
+	FK_TypeTile integer not null constraint FK_TypeTile_Tile foreign key references [jadeg].[TypeTile](Id),	
 	Pitch integer not null,
 	Backgound nvarchar(256) not null,
-	Content nvarchar(max)
+	CanLinkNorth bit not null,
+	CanLinkSouth bit not null,
+	CanLinkEast bit not null,
+	CanLinkWest bit not null
 )
 go
 
@@ -64,8 +68,17 @@ create table [jadeg].[Wall]
 )
 go
 
-alter table [jadeg].[Tile] add constraint unique_tile_for_dungeon unique(FK_Dungeon, XCoord, YCoord)
-go
+create table [jadeg].[LinkDungeonTile]
+(
+	Id integer not null primary key identity(1,1),
+	FK_Tile integer not null constraint FK_LinkDungeonTile_Tile foreign key references [jadeg].[Tile](Id),
+	FK_Dungeon integer not null constraint FK_LinkDungeonTile_Dungeon foreign key references [jadeg].[Dungeon](Id),
+	XCoord integer not null,
+	YCoord integer not null
+)
+
+--alter table [jadeg].[Tile] add constraint unique_tile_for_dungeon unique(FK_Dungeon, XCoord, YCoord)
+--go
 
 insert into [jadeg].[TypeTile] (Name, Rate) values ('Classic', 95)
 insert into [jadeg].[TypeTile] (Name, Rate) values ('Entrance', 0)
@@ -74,7 +87,9 @@ insert into [jadeg].[TypeTile] (Name, Rate) values ('Exit', 5)
 -- données de test
 insert into [jadeg].[Dungeon] (Name) values ('Donjon de test')
 go
-insert into [jadeg].[Tile] (FK_Dungeon, FK_TypeTile, Pitch, XCoord, YCoord, Content, Backgound) values (1, 1, 120, 0, 0, '', 'nesw')
+insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLinkSouth, CanLinkEast, CanLinkWest) values (1, 120, 'nesw', 1, 1, 1, 1)
+go
+insert into [jadeg].[LinkDungeonTile] (FK_Tile, FK_Dungeon, XCoord, YCoord) values (1,1,0,0)
 go
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (1, 0, 0, 40, 40)
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (1, 80, 0, 120, 40)

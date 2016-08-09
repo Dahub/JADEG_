@@ -12,18 +12,28 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="LinkDungeonTile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FK_Tile" Type="int" Nullable="false" />
+          <Property Name="FK_Dungeon" Type="int" Nullable="false" />
+          <Property Name="XCoord" Type="int" Nullable="false" />
+          <Property Name="YCoord" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Tile">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="FK_Dungeon" Type="int" Nullable="false" />
           <Property Name="FK_TypeTile" Type="int" Nullable="false" />
-          <Property Name="XCoord" Type="int" Nullable="false" />
-          <Property Name="YCoord" Type="int" Nullable="false" />
           <Property Name="Pitch" Type="int" Nullable="false" />
           <Property Name="Backgound" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="CanLinkNorth" Type="bit" Nullable="false" />
+          <Property Name="CanLinkSouth" Type="bit" Nullable="false" />
+          <Property Name="CanLinkEast" Type="bit" Nullable="false" />
+          <Property Name="CanLinkWest" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="TypeTile">
           <Key>
@@ -44,15 +54,27 @@
           <Property Name="StartYCoord" Type="int" Nullable="false" />
           <Property Name="EndYCoord" Type="int" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Tile_Dungeon">
+        <Association Name="FK_LinkDungeonTile_Dungeon">
           <End Role="Dungeon" Type="Self.Dungeon" Multiplicity="1" />
-          <End Role="Tile" Type="Self.Tile" Multiplicity="*" />
+          <End Role="LinkDungeonTile" Type="Self.LinkDungeonTile" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Dungeon">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Tile">
+            <Dependent Role="LinkDungeonTile">
               <PropertyRef Name="FK_Dungeon" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LinkDungeonTile_Tile">
+          <End Role="Tile" Type="Self.Tile" Multiplicity="1" />
+          <End Role="LinkDungeonTile" Type="Self.LinkDungeonTile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LinkDungeonTile">
+              <PropertyRef Name="FK_Tile" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -82,12 +104,17 @@
         </Association>
         <EntityContainer Name="JadegModelStoreContainer">
           <EntitySet Name="Dungeon" EntityType="Self.Dungeon" Schema="jadeg" store:Type="Tables" />
+          <EntitySet Name="LinkDungeonTile" EntityType="Self.LinkDungeonTile" Schema="jadeg" store:Type="Tables" />
           <EntitySet Name="Tile" EntityType="Self.Tile" Schema="jadeg" store:Type="Tables" />
           <EntitySet Name="TypeTile" EntityType="Self.TypeTile" Schema="jadeg" store:Type="Tables" />
           <EntitySet Name="Wall" EntityType="Self.Wall" Schema="jadeg" store:Type="Tables" />
-          <AssociationSet Name="FK_Tile_Dungeon" Association="Self.FK_Tile_Dungeon">
+          <AssociationSet Name="FK_LinkDungeonTile_Dungeon" Association="Self.FK_LinkDungeonTile_Dungeon">
             <End Role="Dungeon" EntitySet="Dungeon" />
+            <End Role="LinkDungeonTile" EntitySet="LinkDungeonTile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LinkDungeonTile_Tile" Association="Self.FK_LinkDungeonTile_Tile">
             <End Role="Tile" EntitySet="Tile" />
+            <End Role="LinkDungeonTile" EntitySet="LinkDungeonTile" />
           </AssociationSet>
           <AssociationSet Name="FK_TypeTile_Tile" Association="Self.FK_TypeTile_Tile">
             <End Role="TypeTile" EntitySet="TypeTile" />
@@ -108,23 +135,23 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Tiles" Relationship="Self.FK_Tile_Dungeon" FromRole="Dungeon" ToRole="Tile" />
+          <NavigationProperty Name="LinkDungeonTile" Relationship="JadegModel.FK_LinkDungeonTile_Dungeon" FromRole="Dungeon" ToRole="LinkDungeonTile" />
         </EntityType>
         <EntityType Name="Tile">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FK_Dungeon" Type="Int32" Nullable="false" />
           <Property Name="FK_TypeTile" Type="Int32" Nullable="false" />
-          <Property Name="XCoord" Type="Int32" Nullable="false" />
-          <Property Name="YCoord" Type="Int32" Nullable="false" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Dungeon" Relationship="Self.FK_Tile_Dungeon" FromRole="Tile" ToRole="Dungeon" />
           <NavigationProperty Name="TypeTile" Relationship="Self.FK_TypeTile_Tile" FromRole="Tile" ToRole="TypeTile" />
           <Property Name="Pitch" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Walls" Relationship="JadegModel.FK_Wall_Tile" FromRole="Tile" ToRole="Wall" />
           <Property Name="Backgound" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="LinkDungeonTile" Relationship="JadegModel.FK_LinkDungeonTile_Tile" FromRole="Tile" ToRole="LinkDungeonTile" />
+          <Property Name="CanLinkNorth" Type="Boolean" Nullable="false" />
+          <Property Name="CanLinkSouth" Type="Boolean" Nullable="false" />
+          <Property Name="CanLinkEast" Type="Boolean" Nullable="false" />
+          <Property Name="CanLinkWest" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="TypeTile">
           <Key>
@@ -135,18 +162,6 @@
           <NavigationProperty Name="Tile" Relationship="Self.FK_TypeTile_Tile" FromRole="TypeTile" ToRole="Tile" />
           <Property Name="Rate" Type="Int32" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Tile_Dungeon">
-          <End Role="Dungeon" Type="Self.Dungeon" Multiplicity="1" />
-          <End Role="Tile" Type="Self.Tile" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Dungeon">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Tile">
-              <PropertyRef Name="FK_Dungeon" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_TypeTile_Tile">
           <End Role="TypeTile" Type="Self.TypeTile" Multiplicity="1" />
           <End Role="Tile" Type="Self.Tile" Multiplicity="*" />
@@ -163,10 +178,6 @@
           <EntitySet Name="Dungeon" EntityType="Self.Dungeon" />
           <EntitySet Name="Tile" EntityType="Self.Tile" />
           <EntitySet Name="TypeTile" EntityType="Self.TypeTile" />
-          <AssociationSet Name="FK_Tile_Dungeon" Association="Self.FK_Tile_Dungeon">
-            <End Role="Dungeon" EntitySet="Dungeon" />
-            <End Role="Tile" EntitySet="Tile" />
-          </AssociationSet>
           <AssociationSet Name="FK_TypeTile_Tile" Association="Self.FK_TypeTile_Tile">
             <End Role="TypeTile" EntitySet="TypeTile" />
             <End Role="Tile" EntitySet="Tile" />
@@ -175,6 +186,15 @@
           <AssociationSet Name="FK_Wall_Tile" Association="JadegModel.FK_Wall_Tile">
             <End Role="Tile" EntitySet="Tile" />
             <End Role="Wall" EntitySet="Wall" />
+          </AssociationSet>
+          <EntitySet Name="LinkDungeonTile" EntityType="JadegModel.LinkDungeonTile" />
+          <AssociationSet Name="FK_LinkDungeonTile_Dungeon" Association="JadegModel.FK_LinkDungeonTile_Dungeon">
+            <End Role="Dungeon" EntitySet="Dungeon" />
+            <End Role="LinkDungeonTile" EntitySet="LinkDungeonTile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LinkDungeonTile_Tile" Association="JadegModel.FK_LinkDungeonTile_Tile">
+            <End Role="Tile" EntitySet="Tile" />
+            <End Role="LinkDungeonTile" EntitySet="LinkDungeonTile" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Wall">
@@ -201,6 +221,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="LinkDungeonTile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FK_Tile" Type="Int32" Nullable="false" />
+          <Property Name="FK_Dungeon" Type="Int32" Nullable="false" />
+          <Property Name="XCoord" Type="Int32" Nullable="false" />
+          <Property Name="YCoord" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Dungeon" Relationship="JadegModel.FK_LinkDungeonTile_Dungeon" FromRole="LinkDungeonTile" ToRole="Dungeon" />
+          <NavigationProperty Name="Tile" Relationship="JadegModel.FK_LinkDungeonTile_Tile" FromRole="LinkDungeonTile" ToRole="Tile" />
+        </EntityType>
+        <Association Name="FK_LinkDungeonTile_Dungeon">
+          <End Type="JadegModel.Dungeon" Role="Dungeon" Multiplicity="1" />
+          <End Type="JadegModel.LinkDungeonTile" Role="LinkDungeonTile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dungeon">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LinkDungeonTile">
+              <PropertyRef Name="FK_Dungeon" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LinkDungeonTile_Tile">
+          <End Type="JadegModel.Tile" Role="Tile" Multiplicity="1" />
+          <End Type="JadegModel.LinkDungeonTile" Role="LinkDungeonTile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LinkDungeonTile">
+              <PropertyRef Name="FK_Tile" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -218,14 +274,14 @@
           <EntitySetMapping Name="Tile">
             <EntityTypeMapping TypeName="JadegModel.Tile">
               <MappingFragment StoreEntitySet="Tile">
+                <ScalarProperty Name="CanLinkWest" ColumnName="CanLinkWest" />
+                <ScalarProperty Name="CanLinkEast" ColumnName="CanLinkEast" />
+                <ScalarProperty Name="CanLinkSouth" ColumnName="CanLinkSouth" />
+                <ScalarProperty Name="CanLinkNorth" ColumnName="CanLinkNorth" />
                 <ScalarProperty Name="Backgound" ColumnName="Backgound" />
                 <ScalarProperty Name="Pitch" ColumnName="Pitch" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FK_Dungeon" ColumnName="FK_Dungeon" />
                 <ScalarProperty Name="FK_TypeTile" ColumnName="FK_TypeTile" />
-                <ScalarProperty Name="XCoord" ColumnName="XCoord" />
-                <ScalarProperty Name="YCoord" ColumnName="YCoord" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -245,6 +301,17 @@
                 <ScalarProperty Name="StartYCoord" ColumnName="StartYCoord" />
                 <ScalarProperty Name="EndXCoord" ColumnName="EndXCoord" />
                 <ScalarProperty Name="StartXCoord" ColumnName="StartXCoord" />
+                <ScalarProperty Name="FK_Tile" ColumnName="FK_Tile" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LinkDungeonTile">
+            <EntityTypeMapping TypeName="JadegModel.LinkDungeonTile">
+              <MappingFragment StoreEntitySet="LinkDungeonTile">
+                <ScalarProperty Name="YCoord" ColumnName="YCoord" />
+                <ScalarProperty Name="XCoord" ColumnName="XCoord" />
+                <ScalarProperty Name="FK_Dungeon" ColumnName="FK_Dungeon" />
                 <ScalarProperty Name="FK_Tile" ColumnName="FK_Tile" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

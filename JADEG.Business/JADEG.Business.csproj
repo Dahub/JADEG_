@@ -57,6 +57,9 @@
   <ItemGroup>
     <Compile Include="DtoObjects\DtoTile.cs" />
     <Compile Include="DtoObjects\DtoWall.cs" />
+    <Compile Include="LinkDungeonTile.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="TileManager.cs" />
     <Compile Include="Dungeon.cs">
       <DependentUpon>Model.tt</DependentUpon>
