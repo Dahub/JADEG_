@@ -12,6 +12,8 @@ namespace JADEG.Business
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class Entities : DbContext
     {
@@ -30,5 +32,56 @@ namespace JADEG.Business
         public virtual DbSet<TypeTile> TypeTile { get; set; }
         public virtual DbSet<Wall> Wall { get; set; }
         public virtual DbSet<LinkDungeonTile> LinkDungeonTile { get; set; }
+    
+        public virtual ObjectResult<SELECT_POSSIBLES_TILES_Result> SELECT_POSSIBLES_TILES(Nullable<int> x, Nullable<int> y, Nullable<int> dungeonId)
+        {
+            var xParameter = x.HasValue ?
+                new ObjectParameter("x", x) :
+                new ObjectParameter("x", typeof(int));
+    
+            var yParameter = y.HasValue ?
+                new ObjectParameter("y", y) :
+                new ObjectParameter("y", typeof(int));
+    
+            var dungeonIdParameter = dungeonId.HasValue ?
+                new ObjectParameter("dungeonId", dungeonId) :
+                new ObjectParameter("dungeonId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SELECT_POSSIBLES_TILES_Result>("SELECT_POSSIBLES_TILES", xParameter, yParameter, dungeonIdParameter);
+        }
+    
+        public virtual ObjectResult<Tile> GetPossiblesTiles(Nullable<int> x, Nullable<int> y, Nullable<int> dungeonId)
+        {
+            var xParameter = x.HasValue ?
+                new ObjectParameter("x", x) :
+                new ObjectParameter("x", typeof(int));
+    
+            var yParameter = y.HasValue ?
+                new ObjectParameter("y", y) :
+                new ObjectParameter("y", typeof(int));
+    
+            var dungeonIdParameter = dungeonId.HasValue ?
+                new ObjectParameter("dungeonId", dungeonId) :
+                new ObjectParameter("dungeonId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Tile>("GetPossiblesTiles", xParameter, yParameter, dungeonIdParameter);
+        }
+    
+        public virtual ObjectResult<Tile> GetPossiblesTiles(Nullable<int> x, Nullable<int> y, Nullable<int> dungeonId, MergeOption mergeOption)
+        {
+            var xParameter = x.HasValue ?
+                new ObjectParameter("x", x) :
+                new ObjectParameter("x", typeof(int));
+    
+            var yParameter = y.HasValue ?
+                new ObjectParameter("y", y) :
+                new ObjectParameter("y", typeof(int));
+    
+            var dungeonIdParameter = dungeonId.HasValue ?
+                new ObjectParameter("dungeonId", dungeonId) :
+                new ObjectParameter("dungeonId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Tile>("GetPossiblesTiles", mergeOption, xParameter, yParameter, dungeonIdParameter);
+        }
     }
 }

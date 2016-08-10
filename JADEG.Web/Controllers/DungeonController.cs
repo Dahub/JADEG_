@@ -9,10 +9,8 @@ namespace JADEG.Web.Controllers
 {
     public class DungeonController : Controller
     {
-        // GET: Dungeon
         public ActionResult Explore()
-        {
-           
+        {           
             return View();
         }
     }

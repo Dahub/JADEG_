@@ -7,6 +7,10 @@
         Votre navigateur ne supporte pas canvas.
     </canvas>
 </div>
+
+<div id="xdiv"></div>
+<div id="ydiv"></div>
+
 <script type="text/javascript">
 
     var pitchNumbers = 120;
@@ -19,7 +23,21 @@
 
     var ressources = {};
     var sources = {
-        nesw: '/Images/nesw.svg'
+        nesw: '/Images/nesw.svg',
+        e: '/Images/e.svg',
+        es: '/Images/es.svg',
+        esw: '/Images/esw.svg',
+        ew: '/Images/ew.svg',
+        n: '/Images/n.svg',
+        ne: '/Images/ne.svg',
+        nes: '/Images/nes.svg',
+        new: '/Images/new.svg',
+        ns: '/Images/ns.svg',
+        nsw: '/Images/nsw.svg',
+        s: '/Images/s.svg',
+        sw: '/Images/sw.svg',
+        w: '/Images/w.svg',
+        wn: '/Images/wn.svg',
     }
 
     var tile; // la case en cours
@@ -34,11 +52,13 @@
     $(document).ready(function () {
 
         // chargement de la tile
+        var model = { DungeonId: 1, XCoord: 0, YCoord: 0 };
         $.ajax({
             url: '/Tile/LoadTile',
             cache: false,
             async: false,
-            type: 'GET',
+            type: 'POST',
+            data: JSON.stringify(model),
             dataType: "json",
             contentType: 'application/json; charset=utf-8'
         }).done(function (data) {
@@ -129,15 +149,28 @@
         }
 
         if (tileMove.tileLoaded === false && (tileMove.E === true || tileMove.W || true && tileMove.N === true || tileMove.S === true)) {
+            var model = { DungeonId: tile.DungeonId, XCoord: tile.XCoord, YCoord: tile.YCoord };
+            if (tileMove.E === true)
+                model.XCoord += 1;
+            if (tileMove.W === true)
+                model.XCoord -= 1;
+            if (tileMove.N === true)
+                model.YCoord += 1;
+            if (tileMove.S === true)
+                model.YCoord -= 1;
+
             $.ajax({
                 url: '/Tile/LoadTile',
                 cache: false,
                 async: false,
-                type: 'GET',
+                data: JSON.stringify(model),
+                type: 'POST',
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8'
             }).done(function (data) {
                 nextTile = data;
+                $('#xdiv').html(nextTile.XCoord);
+                $('#ydiv').html(nextTile.YCoord);
             });
             tileMove.tileLoaded = true;
         }

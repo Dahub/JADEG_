@@ -58,6 +58,9 @@
     <Compile Include="LinkDungeonTile.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="SELECT_POSSIBLES_TILES_Result.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="TileManager.cs" />
     <Compile Include="Dungeon.cs">
       <DependentUpon>Model.tt</DependentUpon>

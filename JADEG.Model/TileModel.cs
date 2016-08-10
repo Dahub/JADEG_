@@ -9,6 +9,7 @@ namespace JADEG.Model
             Walls = new List<WallModel>();
         }
 
+        public int DungeonId { get; set; }
         public int XCoord { get; set; }
         public int YCoord { get; set; }
         public string Background { get; set; }

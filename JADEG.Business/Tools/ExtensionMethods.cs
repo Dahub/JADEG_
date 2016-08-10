@@ -11,6 +11,7 @@ namespace JADEG.Business
                 XCoord = toConvert.XCoord,
                 YCoord = toConvert.YCoord,
                 Background = toConvert.Tile.Backgound,
+                DungeonId = toConvert.FK_Dungeon
             };
             foreach(var w in toConvert.Tile.Walls)
             {
