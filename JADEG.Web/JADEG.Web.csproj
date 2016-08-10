@@ -109,6 +109,20 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Images\e.svg" />
+    <Content Include="Images\es.svg" />
+    <Content Include="Images\esw.svg" />
+    <Content Include="Images\ew.svg" />
+    <Content Include="Images\n.svg" />
+    <Content Include="Images\ne.svg" />
+    <Content Include="Images\nes.svg" />
+    <Content Include="Images\new.svg" />
+    <Content Include="Images\ns.svg" />
+    <Content Include="Images\nsw.svg" />
+    <Content Include="Images\s.svg" />
+    <Content Include="Images\sw.svg" />
+    <Content Include="Images\w.svg" />
+    <Content Include="Images\wn.svg" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.1.0.min.js" />
     <Content Include="Web.config" />
@@ -145,6 +159,10 @@
     <ProjectReference Include="..\JADEG.Business\JADEG.Business.csproj">
       <Project>{8015c678-225c-46a2-8b67-48bd89cfff65}</Project>
       <Name>JADEG.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JADEG.Model\JADEG.Model.csproj">
+      <Project>{968a4077-1ec4-44f8-910f-fe8372256bc3}</Project>
+      <Name>JADEG.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

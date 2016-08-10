@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 
-namespace JADEG.Business
+namespace JADEG.Model
 {
-    public class DtoTile
+    public class TileModel
     {
-        public DtoTile()
+        public TileModel()
         {
-            Walls = new List<DtoWall>();
+            Walls = new List<WallModel>();
         }
 
         public int XCoord { get; set; }
         public int YCoord { get; set; }
         public string Background { get; set; }
-        public IList<DtoWall> Walls { get; set; }
+        public IList<WallModel> Walls { get; set; }
     }
 }

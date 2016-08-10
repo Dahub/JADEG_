@@ -1,6 +1,6 @@
-﻿namespace JADEG.Business
+﻿namespace JADEG.Model
 {
-    public class DtoWall
+    public class WallModel
     {
         public int StartX { get; set; }
         public int EndX { get; set; }

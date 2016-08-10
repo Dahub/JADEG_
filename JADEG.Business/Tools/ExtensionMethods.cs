@@ -1,10 +1,12 @@
-﻿namespace JADEG.Business
+﻿using JADEG.Model;
+
+namespace JADEG.Business
 {
     internal static class ExtensionMethods
     {
-        internal static DtoTile ToDto(this LinkDungeonTile toConvert)
+        internal static TileModel ToDto(this LinkDungeonTile toConvert)
         {
-            DtoTile toReturn = new DtoTile()
+            TileModel toReturn = new TileModel()
             {
                 XCoord = toConvert.XCoord,
                 YCoord = toConvert.YCoord,
@@ -12,7 +14,7 @@
             };
             foreach(var w in toConvert.Tile.Walls)
             {
-                toReturn.Walls.Add(new DtoWall()
+                toReturn.Walls.Add(new WallModel()
                 {
                     StartX = w.StartXCoord,
                     EndX = w.EndXCoord,

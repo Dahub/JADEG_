@@ -9,7 +9,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   sodipodi:docname="nesw.svg"
+   sodipodi:docname="nesw - Copie (3).svg"
    inkscape:version="0.91 r13725"
    version="1.1"
    id="svg2"
@@ -29,7 +29,7 @@
      inkscape:current-layer="layer1"
      inkscape:document-units="px"
      inkscape:cy="248.49097"
-     inkscape:cx="127.04336"
+     inkscape:cx="27.703445"
      inkscape:zoom="1.5602993"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -68,8 +68,8 @@
     <rect
        style="fill:#552200"
        id="rect3360"
-       width="110"
-       height="110"
+       width="109.93274"
+       height="329.91129"
        x="0.067262605"
        y="722.45087" />
     <rect
@@ -81,17 +81,10 @@
        y="722.45087" />
     <rect
        style="fill:#552200"
-       id="rect3379"
-       width="110"
-       height="110"
-       x="0.067262605"
-       y="942.45087" />
-    <rect
-       style="fill:#552200"
        id="rect3381"
-       width="110"
-       height="110"
-       x="220.06726"
-       y="942.45087" />
+       width="220.06726"
+       height="110.08879"
+       x="110"
+       y="942.36212" />
   </g>
 </svg>

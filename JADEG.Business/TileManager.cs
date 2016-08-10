@@ -1,12 +1,14 @@
-﻿using System.Linq;
+﻿using JADEG.Model;
+using System.Linq;
+using System;
 
 namespace JADEG.Business
 {
     public class TileManager
     {
-        public DtoTile GetTile(int dungeonId, int xCoord, int yCoord)
+        public TileModel GetTile(int dungeonId, int xCoord, int yCoord)
         {
-            DtoTile toReturn = new DtoTile();
+            TileModel toReturn = new TileModel();
 
             using (var ctx = new Entities())
             {
@@ -15,9 +17,21 @@ namespace JADEG.Business
                 {
                     toReturn = myTile.ToDto();
                 }
+                else
+                {
+                    toReturn = GenerateNewTile(dungeonId, xCoord, yCoord);
+                }
             }
 
             return toReturn;
+        }
+
+        private TileModel GenerateNewTile(int dungeonId, int xCoord, int yCoord)
+        {
+            // on récupère les tiles autour
+            Tile northTile = null;
+            Tile southtile = null;
+            throw new NotImplementedException();
         }
     }
 }

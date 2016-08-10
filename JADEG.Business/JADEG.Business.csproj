@@ -55,8 +55,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DtoObjects\DtoTile.cs" />
-    <Compile Include="DtoObjects\DtoWall.cs" />
     <Compile Include="LinkDungeonTile.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
@@ -116,6 +114,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JADEG.Model\JADEG.Model.csproj">
+      <Project>{968a4077-1ec4-44f8-910f-fe8372256bc3}</Project>
+      <Name>JADEG.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
