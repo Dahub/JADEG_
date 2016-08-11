@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using JADEG.Business;
+﻿using System.Web.Mvc;
 
 namespace JADEG.Web.Controllers
 {
@@ -11,7 +6,11 @@ namespace JADEG.Web.Controllers
     {
         public ActionResult Explore()
         {           
-            return View();
+            if(Session["player"] == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View(Session["player"]);
         }
     }
 }

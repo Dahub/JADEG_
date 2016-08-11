@@ -1,4 +1,6 @@
-﻿@{
+﻿@model JADEG.Model.PlayerModel
+
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -44,7 +46,7 @@
     var tile; // la case en cours
     var nextTile; // la prochaine case, lorsque le joueur en change
 
-    var otherPlayers;
+    var otherPlayers = {};
 
     var canvasOrigin = { x: 0, y: 0 };
     var playerPosition = { x: Math.round(300 / playerSpeed) * playerSpeed, y: Math.round(120 / playerSpeed) * playerSpeed };
@@ -85,8 +87,20 @@
         });
 
         dungeonHub.client.movePlayer = function (name, posX, posY) {
-            console.log(name + ' - x: ' + posX + ' y: ' + posY);
+            //   console.log(name + ' - x: ' + posX + ' y: ' + posY);
+            otherPlayers[name].x = posX;
+            otherPlayers[name].y = posY;
         };
+
+        dungeonHub.client.newPlayerJoin = function (name, posX, posY) {
+            //    console.log('un joueur arrive : ' + name + ' - x: ' + posX + ' y: ' + posY);
+            otherPlayers[name] = { x: posX, y: posY };
+        };
+
+        dungeonHub.client.playerQuit = function (name) {
+            //   console.log('un joueur part : ' + name);
+            delete otherPlayers[name];
+        }
     });
 
     function loadRessources(sources, callback) {
@@ -129,12 +143,23 @@
         }
 
         // on trace le player
-        context.fillStyle = 'rgba(102, 0, 51)';
+        context.fillStyle = '#000000';
         context.fillRect(
             playerPosition.x * pitch - playerSize * pitch / 2,
             playerPosition.y * pitch - playerSize * pitch / 2,
             playerSize * pitch,
             playerSize * pitch);
+
+        // on trace les autres joueurs
+        context.fillStyle = '#FF0000';
+        for (key in otherPlayers) {
+            var o = otherPlayers[key];
+            context.fillRect(
+                 o.x * pitch - playerSize * pitch / 2,
+                 o.y * pitch - playerSize * pitch / 2,
+                 playerSize * pitch,
+                 playerSize * pitch);
+        }
     }
 
     function checkTileChange() {
@@ -154,7 +179,7 @@
 
         if (tileMove.tileLoaded === false && (tileMove.E === true || tileMove.W || true && tileMove.N === true || tileMove.S === true)) {
             var x = tile.XCoord;
-            var y = tile.YCoord
+            var y = tile.YCoord;
             if (tileMove.E === true)
                 x += 1;
             if (tileMove.W === true)
@@ -216,12 +241,12 @@
                 if (playerPosition.x >= toGoPosition.x) {
                     playerPosition.x = toGoPosition.x;
                 }
-                if(delta > 0){
+                if (delta > 0) {
                     moving = true;
-                }                
+                }
             }
             else if (toGoPosition.x < playerPosition.x) {
-                var delta =  checkCollision(playerPosition.x, playerPosition.y, -1, 0, playerSpeed, playerSize);
+                var delta = checkCollision(playerPosition.x, playerPosition.y, -1, 0, playerSpeed, playerSize);
                 playerPosition.x -= delta;
                 if (playerPosition.x < toGoPosition.x) {
                     playerPosition.x = toGoPosition.x;
@@ -237,7 +262,7 @@
                 if (playerPosition.y > toGoPosition.y) {
                     playerPosition.y = toGoPosition.y
                 }
-                if(delta > 0){
+                if (delta > 0) {
                     moving = true;
                 }
             }
@@ -247,7 +272,7 @@
                 if (playerPosition.y < toGoPosition.y) {
                     playerPosition.y = toGoPosition.y
                 }
-                if(delta > 0){
+                if (delta > 0) {
                     moving = true;
                 }
             }
@@ -259,7 +284,7 @@
                 toGoPosition.y = playerPosition.y;
             }
             else {
-                $.connection.dungeonHub.server.move('david', playerPosition.x, playerPosition.y, tile.DungeonId, tile.XCoord, tile.YCoord);
+                $.connection.dungeonHub.server.move('@Model.Name', playerPosition.x, playerPosition.y, tile.DungeonId, tile.XCoord, tile.YCoord);
             }
         }
     }
@@ -336,9 +361,9 @@
             $('#xdiv').html(data.XCoord);
             $('#ydiv').html(data.YCoord);
             if (typeof (tile) != 'undefined') {
-                $.connection.dungeonHub.server.quitTile(tile.DungeonId, tile.XCoord, tile.YCoord);
+                $.connection.dungeonHub.server.quitTile(tile.DungeonId, tile.XCoord, tile.YCoord, '@Model.Name');
             }
-            $.connection.dungeonHub.server.joinTile(data.DungeonId, data.XCoord, data.YCoord);
+            $.connection.dungeonHub.server.joinTile(data.DungeonId, data.XCoord, data.YCoord, '@Model.Name', playerPosition.x, playerPosition.y);
             toReturn = data;
         });
         return toReturn;

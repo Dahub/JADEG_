@@ -15,8 +15,8 @@ namespace JADEG.Web.Controllers
         public ActionResult Index(PlayerModel model)
         {
             model = new PlayerManager().GetPlayer(model.Name);
-
-            return View();
+            Session.Add("player", model);
+            return RedirectToAction("Explore", "Dungeon");
         }
     }
 }

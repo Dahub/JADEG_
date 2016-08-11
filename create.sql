@@ -1,4 +1,4 @@
-use Perso
+use Jadeg
 go
 
 if not exists 
@@ -270,7 +270,8 @@ insert into [jadeg].[LinkDungeonTile] (FK_Tile, FK_Dungeon, XCoord, YCoord) valu
 --insert into [jadeg].[LinkDungeonTile] (FK_Tile, FK_Dungeon, XCoord, YCoord) values (50,1,1,1)
 go
 
-insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'David')
+insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'A')
+insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'B')
 
 --exec [Jadeg].[SELECT_POSSIBLES_TILES] 1,0,-1
 --select * from [jadeg].[tile]
