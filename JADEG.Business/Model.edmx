@@ -22,6 +22,14 @@
           <Property Name="XCoord" Type="int" Nullable="false" />
           <Property Name="YCoord" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Player">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FK_LinkDungeonTile" Type="int" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
         <EntityType Name="Tile">
           <Key>
             <PropertyRef Name="Id" />
@@ -79,6 +87,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Player_LinkDungeonTile">
+          <End Role="LinkDungeonTile" Type="Self.LinkDungeonTile" Multiplicity="0..1" />
+          <End Role="Player" Type="Self.Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LinkDungeonTile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="FK_LinkDungeonTile" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TypeTile_Tile">
           <End Role="TypeTile" Type="Self.TypeTile" Multiplicity="1" />
           <End Role="Tile" Type="Self.Tile" Multiplicity="*" />
@@ -111,6 +131,7 @@
         <EntityContainer Name="JadegModelStoreContainer">
           <EntitySet Name="Dungeon" EntityType="Self.Dungeon" Schema="jadeg" store:Type="Tables" />
           <EntitySet Name="LinkDungeonTile" EntityType="Self.LinkDungeonTile" Schema="jadeg" store:Type="Tables" />
+          <EntitySet Name="Player" EntityType="Self.Player" Schema="jadeg" store:Type="Tables" />
           <EntitySet Name="Tile" EntityType="Self.Tile" Schema="jadeg" store:Type="Tables" />
           <EntitySet Name="TypeTile" EntityType="Self.TypeTile" Schema="jadeg" store:Type="Tables" />
           <EntitySet Name="Wall" EntityType="Self.Wall" Schema="jadeg" store:Type="Tables" />
@@ -121,6 +142,10 @@
           <AssociationSet Name="FK_LinkDungeonTile_Tile" Association="Self.FK_LinkDungeonTile_Tile">
             <End Role="Tile" EntitySet="Tile" />
             <End Role="LinkDungeonTile" EntitySet="LinkDungeonTile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Player_LinkDungeonTile" Association="Self.FK_Player_LinkDungeonTile">
+            <End Role="LinkDungeonTile" EntitySet="LinkDungeonTile" />
+            <End Role="Player" EntitySet="Player" />
           </AssociationSet>
           <AssociationSet Name="FK_TypeTile_Tile" Association="Self.FK_TypeTile_Tile">
             <End Role="TypeTile" EntitySet="TypeTile" />
@@ -213,6 +238,11 @@
             <Parameter Name="y" Mode="In" Type="Int32" />
             <Parameter Name="dungeonId" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="Player" EntityType="JadegModel.Player" />
+          <AssociationSet Name="FK_Player_LinkDungeonTile" Association="JadegModel.FK_Player_LinkDungeonTile">
+            <End Role="LinkDungeonTile" EntitySet="LinkDungeonTile" />
+            <End Role="Player" EntitySet="Player" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Wall">
           <Key>
@@ -249,6 +279,7 @@
           <Property Name="YCoord" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Dungeon" Relationship="JadegModel.FK_LinkDungeonTile_Dungeon" FromRole="LinkDungeonTile" ToRole="Dungeon" />
           <NavigationProperty Name="Tile" Relationship="JadegModel.FK_LinkDungeonTile_Tile" FromRole="LinkDungeonTile" ToRole="Tile" />
+          <NavigationProperty Name="Player" Relationship="JadegModel.FK_Player_LinkDungeonTile" FromRole="LinkDungeonTile" ToRole="Player" />
         </EntityType>
         <Association Name="FK_LinkDungeonTile_Dungeon">
           <End Type="JadegModel.Dungeon" Role="Dungeon" Multiplicity="1" />
@@ -285,6 +316,27 @@
           <Property Type="Boolean" Name="CanLinkWest" Nullable="false" />
           <Property Type="Int32" Name="Rate" Nullable="false" />
         </ComplexType>
+        <EntityType Name="Player">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FK_LinkDungeonTile" Type="Int32" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="LinkDungeonTile" Relationship="JadegModel.FK_Player_LinkDungeonTile" FromRole="Player" ToRole="LinkDungeonTile" />
+        </EntityType>
+        <Association Name="FK_Player_LinkDungeonTile">
+          <End Type="JadegModel.LinkDungeonTile" Role="LinkDungeonTile" Multiplicity="0..1" />
+          <End Type="JadegModel.Player" Role="Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LinkDungeonTile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="FK_LinkDungeonTile" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -362,6 +414,15 @@
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="GetPossiblesTiles" FunctionName="JadegModel.Store.SELECT_POSSIBLES_TILES" />
+          <EntitySetMapping Name="Player">
+            <EntityTypeMapping TypeName="JadegModel.Player">
+              <MappingFragment StoreEntitySet="Player">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FK_LinkDungeonTile" ColumnName="FK_LinkDungeonTile" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

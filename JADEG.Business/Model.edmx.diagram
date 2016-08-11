@@ -14,6 +14,8 @@
         <EntityTypeShape EntityType="JadegModel.LinkDungeonTile" Width="1.5" PointX="3.375" PointY="1.75" />
         <AssociationConnector Association="JadegModel.FK_LinkDungeonTile_Dungeon" />
         <AssociationConnector Association="JadegModel.FK_LinkDungeonTile_Tile" />
+        <EntityTypeShape EntityType="JadegModel.Player" Width="1.5" PointX="1.5" PointY="5.625" />
+        <AssociationConnector Association="JadegModel.FK_Player_LinkDungeonTile" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

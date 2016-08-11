@@ -20,42 +20,24 @@ namespace JADEG.Business
                 }
                 else
                 {
-                    toReturn = GenerateNewTile(dungeonId, xCoord, yCoord);
+                    toReturn = GenerateNewTileModel(dungeonId, xCoord, yCoord);
                 }
             }
 
             return toReturn;
         }
 
-        private TileModel GenerateNewTile(int dungeonId, int xCoord, int yCoord)
+        private TileModel GenerateNewTileModel(int dungeonId, int xCoord, int yCoord)
         {
             TileModel toReturn = null;
-            IList<Tile> tiles = new List<Tile>();
+
             using (var ctx = new Entities())
             {
-                tiles = ctx.GetPossiblesTiles(xCoord, yCoord, dungeonId).ToList();
-
-                // on a toutes les cases possibles, il faut en choisir une
-                int totalRand = tiles.Select(t => t.Rate).Sum();
-                Random rand = new Random(DateTime.Now.Millisecond);
-                int choisedInt = rand.Next(0, totalRand);
-                int stack = 0;
-                Tile choisedTile = null;
-                foreach (var t in tiles)
-                {
-                    if (stack > choisedInt)
-                    {
-                        choisedTile = t;
-                        break;
-                    }
-                    stack += t.Rate;
-                }
-                if (choisedTile == null)
-                    choisedTile = tiles.Last();
+                IList<Tile> tiles = ctx.GetPossiblesTiles(xCoord, yCoord, dungeonId).ToList();
+                Tile choisedTile = ChoiseOntileInList(tiles);
 
                 // on sauvegarde   
                 LinkDungeonTile added = null;
-
                 added = new LinkDungeonTile()
                 {
                     FK_Dungeon = dungeonId,
@@ -71,6 +53,26 @@ namespace JADEG.Business
             }
 
             return toReturn;
+        }
+
+        private static Tile ChoiseOntileInList(IList<Tile> tiles)
+        {
+            int totalRand = tiles.Select(t => t.Rate).Sum();
+            Random rand = new Random(DateTime.Now.Millisecond);
+            int choisedInt = rand.Next(0, totalRand);
+            int stack = 0;
+            Tile choisedTile = null;
+            foreach (var t in tiles)
+            {
+                stack += t.Rate;
+                if (stack > choisedInt)
+                {
+                    choisedTile = t;
+                    break;
+                }
+            }
+
+            return choisedTile;
         }
     }
 }

@@ -10,17 +10,14 @@
 namespace JADEG.Business
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class SELECT_POSSIBLES_TILES_Result
+    public partial class Player
     {
         public int Id { get; set; }
-        public int FK_TypeTile { get; set; }
-        public int Pitch { get; set; }
-        public string Backgound { get; set; }
-        public bool CanLinkNorth { get; set; }
-        public bool CanLinkSouth { get; set; }
-        public bool CanLinkEast { get; set; }
-        public bool CanLinkWest { get; set; }
-        public int Rate { get; set; }
+        public Nullable<int> FK_LinkDungeonTile { get; set; }
+        public string Name { get; set; }
+    
+        public virtual LinkDungeonTile LinkDungeonTile { get; set; }
     }
 }
