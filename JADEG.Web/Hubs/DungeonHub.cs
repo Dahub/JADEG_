@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR;
 
 namespace JADEG.Web.Hubs
 {
@@ -6,32 +7,62 @@ namespace JADEG.Web.Hubs
     {
         private string groupNamePattern = "{0}#{1}#{2}";
 
-        public void JoinTile(int dungeonId, int coordX, int coordY, string name, double posX, double posY)
+        public override Task OnDisconnected(bool stopCalled)
         {
-            string groupName = string.Format(groupNamePattern, dungeonId, coordX, coordY);
-            Groups.Add(Context.ConnectionId, groupName);
-            //ClientStack.Add(Context.ConnectionId, new Model.PlayerModel()
-            //{
-            //    DungeonId = dungeonId,
-            //    IsInDungeon = true,
-            //    Name = name,
-            //    XCoord = coordX,
-            //    YCoord = coordY
-            //});
-            Clients.Group(groupName, Context.ConnectionId).newPlayerJoin(name, posX, posY);
-        }
-
-        public void QuitTile(int dungeonId, int coordX, int coordY, string name)
-        {
-            string groupName = string.Format(groupNamePattern, dungeonId, coordX, coordY);
+            string groupName = ClientStack.GetGroupNameByClientId(Context.ConnectionId);    
+                   
+            Clients.Group(groupName).playerQuit(ClientStack.Get(groupName)[Context.ConnectionId].Name);
             Groups.Remove(Context.ConnectionId, groupName);
-            // ClientStack.Remove(Context.ConnectionId);
-            Clients.Group(groupName, Context.ConnectionId).playerQuit(name);
+            ClientStack.Remove(groupName, Context.ConnectionId);
+
+            return base.OnDisconnected(stopCalled);
         }
 
-        public void Move(string playerName, double posX, double posY, int dungeonId, int coordX, int coordY)
+        public void JoinTile(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY)
         {
-            Clients.Group(string.Format(groupNamePattern, dungeonId, coordX, coordY), Context.ConnectionId).movePlayer(playerName, posX, posY);
+            string groupName = string.Format(groupNamePattern, dungeonId, tileCoordX, tileCoordY);
+            Groups.Add(Context.ConnectionId, groupName);
+            Clients.Group(groupName, Context.ConnectionId).newPlayerJoin(name, posX, posY);
+            ClientStack.Add(groupName, Context.ConnectionId, new Model.PlayerModel()
+            {
+                DungeonId = dungeonId,
+                IsInDungeon = true,
+                Name = name,
+                TileXCoord = tileCoordX,
+                TileYCoord = tileCoordY,
+                PosX = posX,
+                PosY = posY
+            });
+
+            foreach (var p in ClientStack.Get(groupName))
+            {
+                Clients.Caller.newPlayerJoin(p.Value.Name, p.Value.PosX, p.Value.PosY);
+            }
+        }
+
+        public void QuitTile(int dungeonId, int tileCoordX, int tileCoordY, string name)
+        {
+            string groupName = string.Format(groupNamePattern, dungeonId, tileCoordX, tileCoordY);
+
+            Clients.Group(groupName, Context.ConnectionId).playerQuit(name);
+            Groups.Remove(Context.ConnectionId, groupName);
+            ClientStack.Remove(groupName, Context.ConnectionId);            
+        }
+
+        public void Move(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY)
+        {
+            string groupName = string.Format(groupNamePattern, dungeonId, tileCoordX, tileCoordY);
+            ClientStack.Update(groupName, Context.ConnectionId, new Model.PlayerModel()
+            {
+                DungeonId = dungeonId,
+                IsInDungeon = true,
+                Name = name,
+                TileXCoord = tileCoordX,
+                TileYCoord = tileCoordY,
+                PosX = posX,
+                PosY = posY
+            });
+            Clients.Group(groupName).movePlayer(name, posX, posY);
         }
     }
 }

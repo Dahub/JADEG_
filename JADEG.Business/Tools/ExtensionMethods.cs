@@ -14,8 +14,8 @@ namespace JADEG.Business
             if(toReturn.IsInDungeon)
             {
                 toReturn.DungeonId = toConvert.LinkDungeonTile.FK_Dungeon;
-                toReturn.XCoord = toConvert.LinkDungeonTile.XCoord;
-                toReturn.YCoord = toConvert.LinkDungeonTile.XCoord;
+                toReturn.TileXCoord = toConvert.LinkDungeonTile.XCoord;
+                toReturn.TileYCoord = toConvert.LinkDungeonTile.XCoord;
             }
 
             return toReturn;
