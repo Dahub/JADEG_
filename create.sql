@@ -272,6 +272,7 @@ go
 
 insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'A')
 insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'B')
+insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'C')
 
 --exec [Jadeg].[SELECT_POSSIBLES_TILES] 1,0,-1
 --select * from [jadeg].[tile]

@@ -1,6 +1,6 @@
 ﻿var size = 600;
 var pitch = 40;
-var speed = 2;
+var speed = 4;
 var canvasOrigin = { x: 0, y: 0 };
 
 var tileMoving = false; // indique si le joueur est entrain de sortir de la tile
@@ -14,19 +14,20 @@ function refreshCanvas(playerName, dungeonId) {
     context.clearRect(0, 0, size, size);
 
     if (tileMoving === false) {
-        evalPlayersPosition();
+        evalPlayersPosition(playerName, dungeonId);
     }
     else {
         canvasOrigin.x -= moveX * 10;
         canvasOrigin.y -= moveY * 10;      
-        context.drawImage(ressources[nextTile.Background], canvasOrigin.x + size * moveX, canvasOrigin.y - size * moveY, size, size);
-        console.log(players[playerName].x);
+        context.drawImage(ressources[nextTile.Background], canvasOrigin.x + size * moveX, canvasOrigin.y + size * moveY, size, size);
         if (Math.abs(canvasOrigin.x) >= size || Math.abs(canvasOrigin.y) >= size) {
             tileMoving = false;
             tile = nextTile;
             nextTile = null;
             canvasOrigin.x = 0;
             canvasOrigin.y = 0;
+            moveX = 0;
+            moveY = 0;
             var x = players[playerName].x;
             var y = players[playerName].y;
             players = {};
@@ -48,61 +49,108 @@ function refreshCanvas(playerName, dungeonId) {
     }
 }
 
-function evalPlayersPosition() {
+function evalPlayersPosition(playerName, dungeonId) {
     $.each(players, function (index, value) {
-        if (value.toGox > value.x)
+        var moveOk = false;
+        if (value.toGox > value.x){
             value.x += speed;
-        if (value.toGox < value.x)
+            moveOk = true;
+        }
+        else if (value.toGox < value.x){
             value.x -= speed;
-        if (value.toGoy > value.y)
+            moveOk = true;
+        }
+        if (value.toGoy > value.y){
             value.y += speed;
-        if (value.toGoy < value.y)
+            moveOk = true;
+        }
+        else if (value.toGoy < value.y){
             value.y -= speed;
+            moveOk = true;
+        }
+
+        // on vérifie si on n'est pas sorti de la tile
+        if(moveOk)
+            checkTileChange(playerName, dungeonId);
     });
 }
 
 function keyPressedOnCanvas(e, playerName, dungeonId) {
     if (tileMoving === false && players[playerName].toGoy === players[playerName].y && players[playerName].toGox === players[playerName].x) {
         var newMove = true;
-        if (e.keyCode === 88) {
+        if (e.keyCode === 88)
             players[playerName].toGoy += pitch;
-        }
-        else if (e.keyCode === 90) {
+        else if (e.keyCode === 90) 
             players[playerName].toGoy -= pitch;
-        }
-        else if (e.keyCode === 68) {
+        else if (e.keyCode === 68)
             players[playerName].toGox += pitch;
-        }
-        else if (e.keyCode === 81) {
+        else if (e.keyCode === 81)
             players[playerName].toGox -= pitch;
-        }
-        else {
-            newMove = false;
-        }
-
+        else
+            newMove = false;            
+        
         if (newMove === true) {
-            $.connection.dungeonHub.server.move(dungeonId, tile.XCoord, tile.YCoord, playerName, players[playerName].toGox, players[playerName].toGoy);
-            // on vérifie si on n'est pas sorti de la tile
-            checkTileChange(playerName, dungeonId);
+            if (checkIfCollision(playerName, players[playerName].toGox, players[playerName].toGoy) === false) {
+                $.connection.dungeonHub.server.move(dungeonId, tile.XCoord, tile.YCoord, playerName, players[playerName].toGox, players[playerName].toGoy);
+            }
+            else {
+                players[playerName].toGox = players[playerName].x;
+                players[playerName].toGoy = players[playerName].y;
+            }
         }
     }
     return false;
 }
 
+function checkIfCollision(playerName, toGoX, toGoY) {
+    // on vérifie qu'on n'est pas dans un mur
+    var collision = false;
+    $.each(tile.Walls, function (i, val) {
+        if (toGoX < val.EndX
+          && toGoX > val.StartX - pitch
+          && toGoY > val.StartY - pitch
+          && toGoY < val.EndY) {
+            collision = true;
+            return false;
+        }
+    });
+
+    // ou dans un autre joueur
+    $.each(players, function (i, val) {
+        if (i !== playerName) {
+            if (val.x === toGoX && val.y === toGoY) {
+                collision = true;
+                return false;
+            }
+        }
+    });
+    return collision
+}
+
 function checkTileChange(playerName, dungeonId) {
-    if (players[playerName].x >= size) {
+    if (players[playerName].x > size - pitch) {
         tileMoving = true;
         players[playerName].x = 0;
         moveX = 1;
     }
-    else if (players[playerName].x <= 0 - pitch) {
+    else if (players[playerName].x < 0) {
         tileMoving = true;
         players[playerName].x = size - pitch;
         moveX = -1;
     }
+    else if (players[playerName].y < 0) {
+        tileMoving = true;
+        players[playerName].y = size - pitch;
+        moveY = -1;
+    }
+    else if (players[playerName].y > size - pitch) {
+        tileMoving = true;
+        players[playerName].y = 0;
+        moveY = 1;
+    }
 
     if (tileMoving) {
-        nextTile = loadNextTile(dungeonId, tile.XCoord + moveX, tile.YCoord + moveY);
+        nextTile = loadNextTile(dungeonId, tile.XCoord + moveX, tile.YCoord - moveY);
         $.connection.dungeonHub.server.quitTile(dungeonId, tile.XCoord, tile.YCoord, playerName);
     }
 }
