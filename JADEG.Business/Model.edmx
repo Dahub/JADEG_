@@ -11,6 +11,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Size" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="LinkDungeonTile">
           <Key>
@@ -167,6 +168,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="LinkDungeonTile" Relationship="JadegModel.FK_LinkDungeonTile_Dungeon" FromRole="Dungeon" ToRole="LinkDungeonTile" />
+          <Property Name="Size" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Tile">
           <Key>
@@ -346,6 +348,7 @@
           <EntitySetMapping Name="Dungeon">
             <EntityTypeMapping TypeName="JadegModel.Dungeon">
               <MappingFragment StoreEntitySet="Dungeon">
+                <ScalarProperty Name="Size" ColumnName="Size" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
               </MappingFragment>

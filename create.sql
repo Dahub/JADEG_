@@ -41,7 +41,8 @@ go
 create table [jadeg].[Dungeon]
 (
 	Id integer not null primary key identity(1,1),
-	Name nvarchar(256) not null
+	Name nvarchar(256) not null,
+	Size integer not null
 )
 go
 
@@ -111,26 +112,40 @@ begin
 	declare @mustLinkNorth bit
 	declare @mustLinkWest bit
 	declare @mustLinkEast bit
+	declare @size integer
+	select @size = Size from [Jadeg].[Dungeon] where Id =  @dungeonId
 
-	select @mustLinkNorth = CanLinkSouth 
-	from [jadeg].[LinkDungeonTile] 
-	inner join [jadeg].[Tile] t on FK_Tile = t.Id
-	where FK_Dungeon = @dungeonId and XCoord = @x and YCoord = @y + 1
+	if(@y >= @size)			
+		set @mustLinkNorth = 0
+	else
+		select @mustLinkNorth = CanLinkSouth 
+		from [jadeg].[LinkDungeonTile] 
+		inner join [jadeg].[Tile] t on FK_Tile = t.Id
+		where FK_Dungeon = @dungeonId and XCoord = @x and YCoord = @y + 1	
 
-	select @mustLinkSouth = CanLinkNorth
-	from [jadeg].[LinkDungeonTile] 
-	inner join [jadeg].[Tile] t on FK_Tile = t.Id
-	where FK_Dungeon = @dungeonId and XCoord = @x and YCoord = @y - 1
+	if(-1 * @y >= @size)
+		set @mustLinkSouth = 0
+	else
+		select @mustLinkSouth = CanLinkNorth
+		from [jadeg].[LinkDungeonTile] 
+		inner join [jadeg].[Tile] t on FK_Tile = t.Id
+		where FK_Dungeon = @dungeonId and XCoord = @x and YCoord = @y - 1
 
-	select @mustLinkWest = CanLinkEast
-	from [jadeg].[LinkDungeonTile] 
-	inner join [jadeg].[Tile] t on FK_Tile = t.Id
-	where FK_Dungeon = @dungeonId and XCoord = @x - 1 and YCoord = @y
+	if(-1 * @x >= @size)
+		set @mustLinkWest = 0
+	else
+		select @mustLinkWest = CanLinkEast
+		from [jadeg].[LinkDungeonTile] 
+		inner join [jadeg].[Tile] t on FK_Tile = t.Id
+		where FK_Dungeon = @dungeonId and XCoord = @x - 1 and YCoord = @y
 
-	select @mustLinkEast = CanLinkWest
-	from [jadeg].[LinkDungeonTile] 
-	inner join [jadeg].[Tile] t on FK_Tile = t.Id
-	where FK_Dungeon = @dungeonId and XCoord = @x + 1 and YCoord = @y
+	if( @x >= @size)
+		set @mustLinkEast = 0
+	else
+		select @mustLinkEast = CanLinkWest
+		from [jadeg].[LinkDungeonTile] 
+		inner join [jadeg].[Tile] t on FK_Tile = t.Id
+		where FK_Dungeon = @dungeonId and XCoord = @x + 1 and YCoord = @y
 
 	select * from [Jadeg].[Tile]
 	where 1 = 1
@@ -158,11 +173,11 @@ insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCo
 -- e
 insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLinkSouth, CanLinkEast, CanLinkWest, Rate) values (1, 600, 'e', 0, 0, 1, 0, 5)
 set @idTile = @@IDENTITY 
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 0, 400, 50)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 0, 400, 80)
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 400, 0, 600, 200)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 600, 400, 550)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 520, 400, 600)
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 400, 400, 600, 600)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 50, 50, 550)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 80, 80, 520)
 
 -- es
 insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLinkSouth, CanLinkEast, CanLinkWest, Rate) values (1, 600, 'es', 0, 1, 1, 0, 25)
@@ -189,9 +204,9 @@ insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLink
 set @idTile = @@IDENTITY 
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 0, 200, 200)
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 400, 0, 600, 200)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 200, 50, 600)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 550, 200, 550, 600)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 50, 550, 550, 600)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 200, 80, 600)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 520, 200, 520, 600)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 80, 520, 520, 600)
 
 --ne
 insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLinkSouth, CanLinkEast, CanLinkWest, Rate) values (1, 600, 'ne', 1, 0, 1, 0, 25)
@@ -233,9 +248,9 @@ insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLink
 set @idTile = @@IDENTITY 
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 400, 200, 600)
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 400, 400, 600, 600)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 0, 50, 400)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 550, 0, 600, 400)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 50, 0, 550, 50)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 0, 80, 400)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 520, 0, 600, 400)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 80, 0, 520, 80)
 
 -- sw
 insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLinkSouth, CanLinkEast, CanLinkWest, Rate) values (1, 600, 'sw', 0, 1, 0, 1, 25)
@@ -249,9 +264,9 @@ insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLink
 set @idTile = @@IDENTITY 
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 0, 200, 200)
 insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 0, 400, 200, 600)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 200, 0, 600, 50)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 200, 550, 600, 600)
-insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 550, 50, 600, 550)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 200, 0, 600, 80)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 200, 520, 600, 600)
+insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCoord) values (@idTile, 520, 80, 600, 520)
 
 -- wn
 insert into [jadeg].[Tile] (FK_TypeTile, Pitch, Backgound, CanLinkNorth, CanLinkSouth, CanLinkEast, CanLinkWest, Rate) values (1, 600, 'wn', 1, 0, 0, 1, 25)
@@ -262,19 +277,38 @@ insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCo
 go
 
 -- données de test
-insert into [jadeg].[Dungeon] (Name) values ('Donjon de test')
+insert into [jadeg].[Dungeon] (Name, size) values ('Donjon de test', 2)
 go
 
 insert into [jadeg].[LinkDungeonTile] (FK_Tile, FK_Dungeon, XCoord, YCoord) values (1,1,0,0)
---insert into [jadeg].[LinkDungeonTile] (FK_Tile, FK_Dungeon, XCoord, YCoord) values (15,1,1,0)
---insert into [jadeg].[LinkDungeonTile] (FK_Tile, FK_Dungeon, XCoord, YCoord) values (50,1,1,1)
 go
 
 insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'A')
 insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'B')
 insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'C')
 
---exec [Jadeg].[SELECT_POSSIBLES_TILES] 1,0,-1
+exec [Jadeg].[SELECT_POSSIBLES_TILES] 0,-1,1
+
+select * from [Jadeg].[LinkDungeonTile] l
+inner join [jadeg].[tile] t on l.FK_Tile = t.Id
+
+declare @x integer
+declare @y integer
+set @x = 0
+set @y = -1
+select case when -1 * (@x - 1) > Size then 0 else CanLinkEast end
+	from [jadeg].[Dungeon] d
+	left join [jadeg].[LinkDungeonTile] dt on d.Id = dt.FK_Dungeon
+	left join [jadeg].[Tile] t on FK_Tile = t.Id and XCoord = @x - 1 and YCoord = @y
+	where FK_Dungeon = 1
+
+select case when @y + 1 > Size then 0 else CanLinkSouth end 
+	from [jadeg].[Dungeon] d
+	left join [jadeg].[LinkDungeonTile] dt on d.Id = dt.FK_Dungeon
+	left join [jadeg].[Tile] t on FK_Tile = t.Id and XCoord = @x and YCoord = @y + 1
+	where d.Id = 1 
+	
+
 --select * from [jadeg].[tile]
 --select * from [jadeg].[LinkDungeonTile]
 --order by FK_Tile
@@ -317,3 +351,11 @@ insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'C')
 --and (@mustLinkNorth is null or CanLinkNorth = @mustLinkNorth)
 --and (@mustLinkEast is null or CanLinkEast = @mustLinkEast)
 --and (@mustLinkWest is null or CanLinkWest = @mustLinkWest)
+
+
+
+	select case when(2 > 3) then 0 else CanLinkSouth end
+	from [jadeg].[Dungeon] d
+	left join [jadeg].[LinkDungeonTile] dt on d.Id = dt.FK_Dungeon
+	left join [jadeg].[Tile] t on FK_Tile = t.Id and XCoord = 0 and YCoord = 2
+	where d.Id = 1 
