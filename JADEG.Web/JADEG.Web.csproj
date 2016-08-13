@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -133,13 +134,17 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Images\Png\es.png" />
     <Content Include="Images\Png\esw.png" />
     <Content Include="Images\Png\ew.png" />
+    <Content Include="Images\Png\ne.png" />
     <Content Include="Images\Png\nes.png" />
     <Content Include="Images\Png\nesw.png" />
     <Content Include="Images\Png\new.png" />
     <Content Include="Images\Png\ns.png" />
     <Content Include="Images\Png\nsw.png" />
+    <Content Include="Images\Png\sw.png" />
+    <Content Include="Images\Png\wn.png" />
     <Content Include="Images\Svg\e.svg" />
     <Content Include="Images\Svg\es.svg" />
     <Content Include="Images\Svg\esw.svg" />
