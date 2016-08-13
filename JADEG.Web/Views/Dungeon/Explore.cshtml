@@ -51,6 +51,18 @@
             }).keydown(function (e) {
                 keyPressedOnCanvas(e, '@Model.Name', '@Model.DungeonId');
             });
+
+            $('#canvasDiv').click(function (e) {
+                clickOnCanvas(e, '@Model.Name', '@Model.DungeonId');
+                //if (tileMove.N !== true && tileMove.S !== true && tileMove.E !== true && tileMove.W !== true) {
+                //    var rect = canvas.getBoundingClientRect();
+                //    var xcord = evt.clientX - rect.left
+                //    var ycord = evt.clientY - rect.top;
+
+                //    toGoPosition.x = Math.round(Math.round((xcord / pitch) / playerSpeed) * playerSpeed);
+                //    toGoPosition.y = Math.round(Math.round((ycord / pitch) / playerSpeed) * playerSpeed);
+                //}
+            });
         });
     });
 
