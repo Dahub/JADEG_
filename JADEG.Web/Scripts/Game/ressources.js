@@ -6,6 +6,7 @@
 var ressources = {};
 
 var sources = {
+    // tiles
     nesw: '/Images/Png/nesw.png',
     e: '/Images/Png/e.png',
     es: '/Images/Png/es.png',
@@ -37,6 +38,9 @@ var sources = {
     svg_sw: '/Images/Svg/sw.svg',
     svg_w: '/Images/Svg/w.svg',
     svg_wn: '/Images/Svg/wn.svg',
+
+    // sprites
+    s_witch: '/Images/Sprites/witch.png'
 }
 
 function loadRessources(sources, callback) {

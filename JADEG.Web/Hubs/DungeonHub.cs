@@ -18,7 +18,7 @@ namespace JADEG.Web.Hubs
             return base.OnDisconnected(stopCalled);
         }
 
-        public void JoinTile(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY)
+        public void JoinTile(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY, int dx, int dy)
         {
             string groupName = string.Format(groupNamePattern, dungeonId, tileCoordX, tileCoordY);
             Groups.Add(Context.ConnectionId, groupName);
@@ -36,7 +36,7 @@ namespace JADEG.Web.Hubs
 
             foreach (var p in ClientStack.Get(groupName))
             {
-                Clients.Caller.newPlayerJoin(p.Value.Name, p.Value.PosX, p.Value.PosY);
+                Clients.Caller.newPlayerJoin(p.Value.Name, p.Value.PosX, p.Value.PosY, dx, dy);
             }
         }
 
@@ -49,7 +49,7 @@ namespace JADEG.Web.Hubs
             ClientStack.Remove(groupName, Context.ConnectionId);            
         }
 
-        public void Move(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY)
+        public void Move(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY, int dx, int dy)
         {
             string groupName = string.Format(groupNamePattern, dungeonId, tileCoordX, tileCoordY);
             ClientStack.Update(groupName, Context.ConnectionId, new Model.PlayerModel()
@@ -62,7 +62,7 @@ namespace JADEG.Web.Hubs
                 PosX = posX,
                 PosY = posY
             });
-            Clients.Group(groupName).movePlayer(name, posX, posY);
+            Clients.Group(groupName).movePlayer(name, posX, posY, dx, dy);
         }
     }
 }

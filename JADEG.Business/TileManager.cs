@@ -44,7 +44,7 @@ namespace JADEG.Business
                     FK_Tile = choisedTile.Id,
                     Tile = choisedTile,
                     XCoord = xCoord,
-                    YCoord = yCoord
+                    YCoord = yCoord                    
                 };
 
                 ctx.LinkDungeonTile.Add(added);

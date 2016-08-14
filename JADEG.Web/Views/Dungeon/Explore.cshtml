@@ -43,7 +43,7 @@
             });
 
             // on rejoins la tile
-            dungeonHub.server.joinTile('@Model.DungeonId', tile.XCoord, tile.YCoord, '@Model.Name', 7 * pitch, 2 * pitch);
+            dungeonHub.server.joinTile('@Model.DungeonId', tile.XCoord, tile.YCoord, '@Model.Name', 7 * pitch, 2 * pitch, 0, 0);
 
             // on écoute les touches pressées sur le canvas
             $("#canvas").attr("tabindex", "0").mousedown(function () {
@@ -58,17 +58,19 @@
         });
     });
 
-    $.connection.dungeonHub.client.newPlayerJoin = function (name, posX, posY) {
-        players[name] = { x: posX, y: posY, toGox: posX, toGoy: posY };
+    $.connection.dungeonHub.client.newPlayerJoin = function (name, posX, posY, dx, dy) {
+        players[name] = { x: posX, y: posY, toGox: posX, toGoy: posY, dx: dx, dy: dy, ticks: 0 };
     };
 
     $.connection.dungeonHub.client.playerQuit = function (name) {
         delete players[name]
     }
 
-    $.connection.dungeonHub.client.movePlayer = function (name, toGoX, toGoY) {
+    $.connection.dungeonHub.client.movePlayer = function (name, toGoX, toGoY, dx, dy) {
         players[name].toGox = toGoX;
         players[name].toGoy = toGoY;
+        players[name].dx = dx;
+        players[name].dy = dy;
     }
 
     function loadNextTile(dungeonId, x, y) {
