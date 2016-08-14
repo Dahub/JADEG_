@@ -31,9 +31,9 @@ function refreshCanvas(playerName, dungeonId) {
             var y = players[playerName].y;
             var dx = players[playerName].dx;
             var dy = players[playerName].dy;
-
+            var skin = players[playerName].skin;
             players = {};
-            $.connection.dungeonHub.server.joinTile(dungeonId, tile.XCoord, tile.YCoord, playerName, x, y, dx, dy);
+            $.connection.dungeonHub.server.joinTile(dungeonId, tile.XCoord, tile.YCoord, playerName, x, y, dx, dy, skin);
         }
     }
     context.drawImage(ressources[tile.Background], canvasOrigin.x, canvasOrigin.y, size, size);
@@ -41,10 +41,10 @@ function refreshCanvas(playerName, dungeonId) {
     // on trace les joueurs si le joueur en cours ne change pas de tile
     if (tileMoving === false) {
         $.each(players, function (index, value) {
-            if (index === playerName)
+            //if (index === playerName)
                 drawPlayer(context, value);
-            else
-                context.fillStyle = '#000000';
+            //else
+            //    context.fillStyle = '#000000';
         });
     }
 }
@@ -75,7 +75,14 @@ function drawPlayer(context, player) {
         yStart = 40;
     else if (player.dy === -1)
         yStart = 120;
-    context.drawImage(ressources['s_witch'], xStart, yStart, 40, 40, player.x, player.y, 40, 40);
+    context.drawImage(ressources[player.skin], xStart, yStart, pitch, pitch, player.x, player.y, pitch, pitch);
+    context.font = "20px Arial";
+    context.lineWidth = 1;
+    context.textAlign = "center";
+    context.strokeStyle = '#000000';
+    context.fillStyle = '#ff6699';
+    context.fillText(player.name, player.x + pitch / 2, player.y - 3);
+    context.strokeText(player.name, player.x + pitch / 2, player.y - 3);
 }
 
 function evalPlayersPosition(playerName, dungeonId) {
@@ -182,7 +189,7 @@ function keyPressedOnCanvas(e, playerName, dungeonId) {
 
 function sendNewMoveInfo(dungeonId, playerName) {
     if (checkIfCollision(playerName, players[playerName].toGox, players[playerName].toGoy) === false) {
-        $.connection.dungeonHub.server.move(dungeonId, tile.XCoord, tile.YCoord, playerName, players[playerName].toGox, players[playerName].toGoy, players[playerName].dx, players[playerName].dy);
+        $.connection.dungeonHub.server.move(dungeonId, tile.XCoord, tile.YCoord, playerName, players[playerName].toGox, players[playerName].toGoy, players[playerName].dx, players[playerName].dy, players[playerName].skin);
     }
     else {
         players[playerName].toGox = players[playerName].x;

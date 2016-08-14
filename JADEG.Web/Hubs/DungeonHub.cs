@@ -18,11 +18,11 @@ namespace JADEG.Web.Hubs
             return base.OnDisconnected(stopCalled);
         }
 
-        public void JoinTile(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY, int dx, int dy)
+        public void JoinTile(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY, int dx, int dy, string skin)
         {
             string groupName = string.Format(groupNamePattern, dungeonId, tileCoordX, tileCoordY);
             Groups.Add(Context.ConnectionId, groupName);
-            Clients.Group(groupName, Context.ConnectionId).newPlayerJoin(name, posX, posY);
+            Clients.Group(groupName, Context.ConnectionId).newPlayerJoin(name, posX, posY, dx, dy, skin);
             ClientStack.Add(groupName, Context.ConnectionId, new Model.PlayerModel()
             {
                 DungeonId = dungeonId,
@@ -31,12 +31,13 @@ namespace JADEG.Web.Hubs
                 TileXCoord = tileCoordX,
                 TileYCoord = tileCoordY,
                 PosX = posX,
-                PosY = posY
+                PosY = posY,
+                Skin = skin
             });
 
             foreach (var p in ClientStack.Get(groupName))
             {
-                Clients.Caller.newPlayerJoin(p.Value.Name, p.Value.PosX, p.Value.PosY, dx, dy);
+                Clients.Caller.newPlayerJoin(p.Value.Name, p.Value.PosX, p.Value.PosY, dx, dy, p.Value.Skin);
             }
         }
 
@@ -49,7 +50,7 @@ namespace JADEG.Web.Hubs
             ClientStack.Remove(groupName, Context.ConnectionId);            
         }
 
-        public void Move(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY, int dx, int dy)
+        public void Move(int dungeonId, int tileCoordX, int tileCoordY, string name, int posX, int posY, int dx, int dy, string skin)
         {
             string groupName = string.Format(groupNamePattern, dungeonId, tileCoordX, tileCoordY);
             ClientStack.Update(groupName, Context.ConnectionId, new Model.PlayerModel()
@@ -60,7 +61,8 @@ namespace JADEG.Web.Hubs
                 TileXCoord = tileCoordX,
                 TileYCoord = tileCoordY,
                 PosX = posX,
-                PosY = posY
+                PosY = posY,
+                Skin = skin
             });
             Clients.Group(groupName).movePlayer(name, posX, posY, dx, dy);
         }

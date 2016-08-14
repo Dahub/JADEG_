@@ -17,7 +17,10 @@ namespace JADEG.Web.Hubs
                 {
                     _clients.Add(groupName, new Dictionary<string, PlayerModel>());
                 }
-                _clients[groupName].Add(connectionId, model);               
+                if (!_clients[groupName].ContainsKey(connectionId))
+                {
+                    _clients[groupName].Add(connectionId, model);
+                }
             }
         }
 
@@ -43,7 +46,7 @@ namespace JADEG.Web.Hubs
                 if (_clients.ContainsKey(groupName) && _clients[groupName].ContainsKey(connectionId))
                 {
                     _clients[groupName].Remove(connectionId);
-                    if(_clients[groupName].Count == 0)
+                    if (_clients[groupName].Count == 0)
                     {
                         _clients.Remove(groupName);
                     }
@@ -70,7 +73,7 @@ namespace JADEG.Web.Hubs
         {
             IDictionary<string, PlayerModel> toReturn = new Dictionary<string, PlayerModel>();
 
-            if(_clients.ContainsKey(groupName))
+            if (_clients.ContainsKey(groupName))
             {
                 toReturn = _clients[groupName];
             }
@@ -80,9 +83,9 @@ namespace JADEG.Web.Hubs
 
         public static string GetGroupNameByClientId(string connectionId)
         {
-            foreach(var c in _clients)
+            foreach (var c in _clients)
             {
-                foreach(var id in c.Value)
+                foreach (var id in c.Value)
                 {
                     if (id.Key.Equals(connectionId))
                         return c.Key;

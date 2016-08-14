@@ -17,7 +17,6 @@ begin
 	drop procedure [Jadeg].[SELECT_POSSIBLES_TILES]
 end 
 
-
 if exists (select * from dbo.sysobjects where id = object_id(N'[jadeg].[Player]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 drop table [jadeg].[Player]
 go
@@ -96,7 +95,8 @@ create table [jadeg].[Player]
 (
 	Id integer not null primary key identity(1,1),
 	FK_LinkDungeonTile integer null constraint FK_Player_LinkDungeonTile foreign key references [jadeg].[LinkDungeonTile](Id),
-	Name nvarchar(256) not null
+	Name nvarchar(256) not null,
+	Skin nvarchar(256) not null
 )
 go
 
@@ -276,15 +276,15 @@ insert into [jadeg].[Wall] (FK_Tile, StartXCoord, StartYCoord, EndXCoord, EndYCo
 go
 
 -- données de test
-insert into [jadeg].[Dungeon] (Name, size) values ('Donjon de test', 2)
+insert into [jadeg].[Dungeon] (Name, size) values ('Donjon de test', 3)
 go
 
 insert into [jadeg].[LinkDungeonTile] (FK_Tile, FK_Dungeon, XCoord, YCoord) values (1,1,0,0)
 go
 
-insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'A')
-insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'B')
-insert into [jadeg].[Player] (FK_LinkDungeonTile, name) values (1, 'C')
+insert into [jadeg].[Player] (FK_LinkDungeonTile, name, Skin) values (1, 'A', 's_witch')
+insert into [jadeg].[Player] (FK_LinkDungeonTile, name, Skin) values (1, 'B', 's_gobelin')
+insert into [jadeg].[Player] (FK_LinkDungeonTile, name, Skin) values (1, 'C', 's_human')
 
 --exec [Jadeg].[SELECT_POSSIBLES_TILES] 0,-1,1
 

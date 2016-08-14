@@ -30,6 +30,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FK_LinkDungeonTile" Type="int" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Skin" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
         <EntityType Name="Tile">
           <Key>
@@ -326,6 +327,7 @@
           <Property Name="FK_LinkDungeonTile" Type="Int32" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="LinkDungeonTile" Relationship="JadegModel.FK_Player_LinkDungeonTile" FromRole="Player" ToRole="LinkDungeonTile" />
+          <Property Name="Skin" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Player_LinkDungeonTile">
           <End Type="JadegModel.LinkDungeonTile" Role="LinkDungeonTile" Multiplicity="0..1" />
@@ -420,6 +422,7 @@
           <EntitySetMapping Name="Player">
             <EntityTypeMapping TypeName="JadegModel.Player">
               <MappingFragment StoreEntitySet="Player">
+                <ScalarProperty Name="Skin" ColumnName="Skin" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="FK_LinkDungeonTile" ColumnName="FK_LinkDungeonTile" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

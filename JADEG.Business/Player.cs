@@ -17,6 +17,7 @@ namespace JADEG.Business
         public int Id { get; set; }
         public Nullable<int> FK_LinkDungeonTile { get; set; }
         public string Name { get; set; }
+        public string Skin { get; set; }
     
         public virtual LinkDungeonTile LinkDungeonTile { get; set; }
     }

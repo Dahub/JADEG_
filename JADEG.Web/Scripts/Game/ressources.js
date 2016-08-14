@@ -40,7 +40,9 @@ var sources = {
     svg_wn: '/Images/Svg/wn.svg',
 
     // sprites
-    s_witch: '/Images/Sprites/witch.png'
+    s_witch: '/Images/Sprites/witch.png',
+    s_gobelin: '/Images/Sprites/gobelin.png',
+    s_human: '/Images/Sprites/human.png'
 }
 
 function loadRessources(sources, callback) {

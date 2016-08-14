@@ -149,6 +149,8 @@
     <Content Include="Images\Png\sw.png" />
     <Content Include="Images\Png\w.png" />
     <Content Include="Images\Png\wn.png" />
+    <Content Include="Images\Sprites\gobelin.png" />
+    <Content Include="Images\Sprites\human.png" />
     <Content Include="Images\Sprites\witch.png" />
     <Content Include="Images\Svg\e.svg" />
     <Content Include="Images\Svg\es.svg" />

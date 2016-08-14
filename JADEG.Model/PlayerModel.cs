@@ -9,5 +9,6 @@
         public int? TileYCoord { get; set; }
         public int? PosX { get; set; } // position du joueur sur la tile
         public int? PosY { get; set; } // position du joueur sur la tile
+        public string Skin { get; set; }
     }
 }

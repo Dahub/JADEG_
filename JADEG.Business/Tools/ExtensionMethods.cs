@@ -9,7 +9,8 @@ namespace JADEG.Business
             PlayerModel toReturn = new PlayerModel()
             {
                 Name = toConvert.Name,
-                IsInDungeon = toConvert.FK_LinkDungeonTile.HasValue
+                IsInDungeon = toConvert.FK_LinkDungeonTile.HasValue,
+                Skin = toConvert.Skin
             };
             if(toReturn.IsInDungeon)
             {
